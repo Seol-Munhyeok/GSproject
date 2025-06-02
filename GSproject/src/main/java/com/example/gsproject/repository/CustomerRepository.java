@@ -1,4 +1,8 @@
 package com.example.gsproject.repository;
 
-public class CustomerRepository {
+import com.example.gsproject.Entity.Customer;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface CustomerRepository extends JpaRepository<Customer, Long> {
+
 }
