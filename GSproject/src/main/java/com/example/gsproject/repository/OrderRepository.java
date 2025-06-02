@@ -1,6 +1,6 @@
 package com.example.gsproject.repository;
 
-import com.example.gsproject.Entity.Order;
+import com.example.gsproject.entity.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;

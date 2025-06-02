@@ -1,11 +1,16 @@
-package com.example.gsproject.Entity;
+package com.example.gsproject.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "customer")
 public class Customer {
     @Id
