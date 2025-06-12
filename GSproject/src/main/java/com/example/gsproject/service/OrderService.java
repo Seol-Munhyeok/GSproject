@@ -43,16 +43,18 @@ public class OrderService {
         order.setOrderDate(LocalDate.now());
         order = orderRepository.save(order);
 
+        orderRepository.flush();
+
         // 3. 주문 상세 저장
         List<OrderItem> orderItemList = new ArrayList<>();
         for (OrderItemDTO itemDTO : dto.orders()) {
-            // 💡 Product 엔티티 조회
             Product product = productRepository.findById(itemDTO.productId())
                     .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품 ID: " + itemDTO.productId()));
 
             OrderItem item = new OrderItem();
             item.setOrder(order);
             item.setProduct(product);
+            item.setProductName(product.getName());
             item.setQuantity(itemDTO.quantity());
 
             orderItemList.add(item);
