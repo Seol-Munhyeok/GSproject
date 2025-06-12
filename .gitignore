@@ -46,7 +46,8 @@ out/
 
 ### VS Code ###
 .vscode/
-
+frontend/node_modules/
+frontend/.idea/
 ./src/main/resources/application.yml
 
 # OS generated files (운영체제별 생성 파일)
