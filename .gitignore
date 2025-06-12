@@ -1,10 +1,11 @@
 # Git 추적에서 제외할 파일들
-GSproject/HELP.md
+HELP.md
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+
 
 ### STS ###
 .apt_generated
