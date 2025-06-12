@@ -1,5 +1,5 @@
 # Git 추적에서 제외할 파일들
-HELP.md
+GSproject/HELP.md
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
@@ -18,6 +18,14 @@ build/
 bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
+
+# IDE 설정 파일
+.idea/
+.vscode/
+
+# Gradle build 결과물
+GSproject/build/
+GSproject/.gradle/
 
 ### IntelliJ IDEA ###
 .idea
