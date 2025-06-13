@@ -1,14 +1,7 @@
 <template>
   <div class="main-container">
-    <!-- 헤더 -->
-    <header class="main-header">
-      <img
-        class="logo"
-        :src="require('@/assets/gs1.jpg')"
-        alt="GS THE FRESH 로고"
-      />
-      <button class="admin-btn" @click="goToAdmin">관리자 로그인</button>
-    </header>
+    <!-- 공통 헤더 적용 -->
+    <Header />
 
     <!-- 오늘 날짜 표시 -->
     <div class="date-title">{{ today }} 오늘의 사전예약 상품</div>
@@ -38,12 +31,9 @@
 
         <!-- 프로모션 안내 (항상 영역 확보) -->
         <div class="promo-section">
-          <!-- 카드결제할인 항상 표시 -->
           <p v-if="product.promotionType === '카드결제할인'" class="card-info">
             삼성, 롯데, 농협, GS Pay 결제 시
           </p>
-
-          <!-- 1+1은 수량 고르면 표시 -->
           <p
             v-else-if="
               product.promotionType === '1+1' && orderMap[product.id] > 0
@@ -52,8 +42,6 @@
           >
             행사 적용 시 총 제공 수량: {{ orderMap[product.id] * 2 }}개
           </p>
-
-          <!-- 행사 없는 경우 빈 공간 확보 -->
           <p v-else class="no-promo">오늘의 행사 상품</p>
         </div>
 
@@ -69,7 +57,7 @@
     <!-- 주문하기 버튼 -->
     <button class="order-btn" @click="submitOrder">주문하기</button>
 
-    <!-- Floating Cart 고급형 -->
+    <!-- Floating Cart -->
     <div
       class="floating-cart"
       v-if="products.length > 0 && cartItems.length > 0"
@@ -96,33 +84,24 @@
         />
         <div class="modal-description">
           <h2>{{ selectedProduct?.name }}</h2>
-
-          <!-- 행사 강조 -->
           <p v-if="selectedProduct?.promotionType" class="modal-promotion">
             [{{ selectedProduct?.promotionType }}]
           </p>
-
-          <!-- 추가 카드결제 문구 -->
           <p
             v-if="selectedProduct?.promotionType === '카드결제할인'"
             class="card-extra-info"
           >
             삼성, 롯데, 농협, GS Pay 결제 시
           </p>
-
-          <!-- 가격 강조 -->
           <p class="modal-price">
-            {{ selectedProduct?.price.toLocaleString() }}원
+            {{ selectedProduct?.price?.toLocaleString() }}원
           </p>
-
-          <!-- 설명 문구 -->
           <p class="modal-description-text">
             {{
               productDescriptionMap[selectedProduct?.name] ||
               '※ 행사 상세 내용은 매장 사정에 따라 달라질 수 있습니다.'
             }}
           </p>
-
           <button class="close-btn" @click="closeModal">닫기</button>
         </div>
       </div>
@@ -134,6 +113,7 @@
 import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import Header from '@/components/Header.vue';
 
 // 이미지 import (원래 카드용)
 import beefSteakImg from '@/assets/beef_steak.png';
@@ -299,10 +279,6 @@ const submitOrder = () => {
   });
 };
 
-const goToAdmin = () => {
-  router.push('/admin/login');
-};
-
 // Floating Cart
 const cartItems = computed(() => {
   return products.value
@@ -377,28 +353,6 @@ const closeModal = () => {
   padding: 20px;
   max-width: 1000px;
   margin: 0 auto;
-}
-
-.main-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 10px;
-  margin-bottom: 20px;
-}
-
-.logo {
-  width: 180px;
-}
-
-.admin-btn {
-  background-color: #555;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  cursor: pointer;
-  border-radius: 6px;
 }
 
 .admin-btn:hover {

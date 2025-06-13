@@ -23,6 +23,11 @@
 
         <button type="submit">로그인</button>
       </form>
+
+      <!-- 주문 화면으로 이동 버튼 추가 -->
+      <button type="button" class="to-products-btn" @click="goToProducts">
+        주문 화면으로 이동
+      </button>
     </div>
   </div>
 </template>
@@ -56,6 +61,10 @@ const handleLogin = async () => {
     console.error('로그인 에러:', e);
     alert('서버 오류로 로그인에 실패했습니다.');
   }
+};
+
+const goToProducts = () => {
+  router.push('/products');
 };
 </script>
 
@@ -115,16 +124,15 @@ const handleLogin = async () => {
 }
 
 .login-options label {
-  display: flex; /* label 자체를 flex 컨테이너로 만들어 내부 요소 정렬 */
-  align-items: center; /* 체크박스와 텍스트를 세로 중앙 정렬 */
-  cursor: pointer; /* 클릭 가능한 요소임을 나타냄 */
+  display: flex;
+  align-items: center;
+  cursor: pointer;
 }
 
 .login-options input[type='checkbox'] {
   margin-right: 6px;
-  /* 체크박스의 기본 외형을 유지하면서 필요에 따라 크기 조절 */
-  width: auto; /* 너비를 자동으로 설정하여 공간 차지 최소화 */
-  margin-bottom: 0; /* input에 설정된 margin-bottom 제거 */
+  width: auto;
+  margin-bottom: 0;
 }
 
 .login-box button {
@@ -141,5 +149,22 @@ const handleLogin = async () => {
 
 .login-box button:hover {
   background-color: #00663b;
+}
+
+.to-products-btn {
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px 15px;
+  background-color: #bbb !important;
+  color: #333;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.to-products-btn:hover {
+  background-color: #ccc !important;
 }
 </style>

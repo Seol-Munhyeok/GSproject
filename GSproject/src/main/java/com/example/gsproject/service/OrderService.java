@@ -1,5 +1,6 @@
 package com.example.gsproject.service;
 
+import com.example.gsproject.dto.OrderAdminViewDTO;
 import com.example.gsproject.entity.*;
 import com.example.gsproject.dto.OrderRequestDTO;
 import com.example.gsproject.dto.OrderItemDTO;
@@ -62,4 +63,10 @@ public class OrderService {
 
         orderItemRepository.saveAll(orderItemList);
     }
+
+    @Transactional(readOnly = true)
+    public List<OrderAdminViewDTO> getAdminOrders() {
+        return orderRepository.findAllOrdersForAdmin();
+    }
+
 }

@@ -16,6 +16,29 @@ const routes = [
     component: AdminDashboard,
     meta: { requiresAuth: true },
   },
+  {
+    path: '/admin/dashboard',
+    component: AdminDashboard,
+    meta: { requiresAuth: true },
+    children: [
+      { path: '', redirect: '/admin/dashboard/orders' },
+      {
+        path: 'orders',
+        component: () => import('../views/AdminOrdersView.vue'),
+      },
+      { path: 'stats', component: () => import('../views/AdminStatsView.vue') },
+      {
+        path: 'products',
+        component: () => import('../views/AdminProductsView.vue'),
+      },
+      { path: 'users', component: () => import('../views/AdminUsersView.vue') },
+      {
+        path: '/admin/dashboard/order-cards',
+        name: 'OrderCards',
+        component: () => import('@/views/OrderCardsView.vue'),
+      },
+    ],
+  },
 ];
 
 const router = createRouter({

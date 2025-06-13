@@ -1,5 +1,6 @@
 <template>
   <div class="order-container">
+    <Header />
     <!-- 로고 -->
     <div class="logo">
       <img :src="require('@/assets/gs1.jpg')" alt="GS THE FRESH 로고" />
@@ -65,6 +66,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
+import Header from '@/components/Header.vue';
 
 // 이미지 import
 import beefSteakImg from '@/assets/beef_steak.png';
