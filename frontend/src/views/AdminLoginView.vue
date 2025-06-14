@@ -53,6 +53,7 @@ const handleLogin = async () => {
 
     if (response.data.success) {
       localStorage.setItem('isAdminLoggedIn', 'true');
+      localStorage.setItem('adminEmail', employeeId.value);
       router.push('/admin/dashboard');
     } else {
       alert(response.data.message);

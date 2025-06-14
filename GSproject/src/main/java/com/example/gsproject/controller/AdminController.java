@@ -1,6 +1,7 @@
 package com.example.gsproject.controller;
 
 import com.example.gsproject.dto.AdminLoginRequest;
+import com.example.gsproject.dto.AdminStatisticsResponse;
 import com.example.gsproject.dto.OrderAdminViewDTO;
 import com.example.gsproject.service.AdminService;
 import com.example.gsproject.service.OrderService;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -41,5 +43,13 @@ public class AdminController {
     public ResponseEntity<List<OrderAdminViewDTO>> getOrdersForAdmin() {
         List<OrderAdminViewDTO> orders = orderService.getAdminOrders();
         return ResponseEntity.ok(orders);
+    }
+
+    @GetMapping("/statistics")
+    public ResponseEntity<AdminStatisticsResponse> getStatistics(
+            @RequestParam LocalDate from,
+            @RequestParam LocalDate to
+    ) {
+        return ResponseEntity.ok(adminService.getStatistics(from, to));
     }
 }
