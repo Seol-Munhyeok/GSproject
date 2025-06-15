@@ -18,4 +18,8 @@ public class ProductService {
     public List<Product> getTodayProducts() {
         return productRepository.findByAvailableTodayTrue();
     }
+
+    public Product saveProduct(Product product) {
+        return productRepository.save(product);
+    }
 }

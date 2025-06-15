@@ -1,9 +1,7 @@
 package com.example.gsproject.service;
 
-import com.example.gsproject.dto.OrderAdminViewDTO;
+import com.example.gsproject.dto.*;
 import com.example.gsproject.entity.*;
-import com.example.gsproject.dto.OrderRequestDTO;
-import com.example.gsproject.dto.OrderItemDTO;
 import com.example.gsproject.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +29,7 @@ public class OrderService {
     }
 
     @Transactional
-    public void saveOrder(OrderRequestDTO dto) {
+    public Order saveOrder(OrderRequestDTO dto) {
         // 1. 고객 저장
         Customer customer = new Customer();
         customer.setName(dto.name());
@@ -62,11 +60,38 @@ public class OrderService {
         }
 
         orderItemRepository.saveAll(orderItemList);
+        return order;
     }
 
     @Transactional(readOnly = true)
     public List<OrderAdminViewDTO> getAdminOrders() {
         return orderRepository.findAllOrdersForAdmin();
     }
+
+    public OrderDetailResponse getOrderDetail(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("해당 주문을 찾을 수 없습니다."));
+
+        List<OrderItemResponse> items = order.getOrderItems().stream().map(item ->
+                new OrderItemResponse(
+                        item.getProduct().getName(),
+                        item.getProduct().getPrice(),
+                        item.getQuantity()
+                )
+        ).toList();
+
+        int totalPrice = items.stream()
+                .mapToInt(i -> i.price() * i.quantity())
+                .sum();
+
+        return new OrderDetailResponse(
+                order.getId(),
+                order.getCreatedAt(),
+                totalPrice,
+                order.getCustomer().getName(),
+                items
+        );
+    }
+
 
 }

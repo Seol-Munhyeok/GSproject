@@ -15,7 +15,7 @@
         @click="openModal(product)"
       >
         <img
-          :src="getProductImage(product.name)"
+          :src="getProductImage(product.imageUrl)"
           alt="상품 이미지"
           class="product-image"
         />
@@ -78,10 +78,11 @@
     <div v-if="isModalOpen" class="modal-overlay" @click.self="closeModal">
       <div class="modal-content">
         <img
-          :src="getFullImage(selectedProduct?.name)"
+          :src="getFullImage(selectedProduct?.imageUrl)"
           alt="상세 이미지"
           class="modal-image"
         />
+
         <div class="modal-description">
           <h2>{{ selectedProduct?.name }}</h2>
           <p v-if="selectedProduct?.promotionType" class="modal-promotion">
@@ -98,7 +99,7 @@
           </p>
           <p class="modal-description-text">
             {{
-              productDescriptionMap[selectedProduct?.name] ||
+              selectedProduct?.description?.trim() ||
               '※ 행사 상세 내용은 매장 사정에 따라 달라질 수 있습니다.'
             }}
           </p>
@@ -115,68 +116,9 @@ import { useRouter } from 'vue-router';
 import axios from 'axios';
 import Header from '@/components/Header.vue';
 
-// 이미지 import (원래 카드용)
-import beefSteakImg from '@/assets/beef_steak.png';
-import blueberryImg from '@/assets/blueberry.png';
-import cornImg from '@/assets/corn.png';
-import duckSliceImg from '@/assets/duck_slice.png';
-import gimImg from '@/assets/gim.png';
-import hamiguaMelonImg from '@/assets/hamigua_melon.png';
-import kiwiImg from '@/assets/kiwi.png';
-import muskmelonImg from '@/assets/muskmelon.png';
-import porkRibsImg from '@/assets/pork_ribs.png';
-import salmonImg from '@/assets/salmon.png';
-import sweetpotatoImg from '@/assets/sweetpotato.png';
-import watermelonImg from '@/assets/watermelon.png';
-import potatoImg from '@/assets/potato.png';
-
-// full 이미지 import (중요 ★)
-import gimFullImg from '@/assets/gim_full.png';
-import beefSteakFullImg from '@/assets/beef_steak_full.png';
-import porkRibsFullImg from '@/assets/pork_ribs_full.png';
-import potatoFullImg from '@/assets/potato_full.png';
-import duckSliceFullImg from '@/assets/duck_slice_full.png';
-import salmonFullImg from '@/assets/salmon_full.png';
-import hamiguaMelonFullImg from '@/assets/hamigua_melon_full.png';
-import blueberryFullImg from '@/assets/blueberry_full.png';
-import watermelonFullImg from '@/assets/watermelon_full.png';
-import cornFullImg from '@/assets/corn_full.png';
-import sweetpotatoFullImg from '@/assets/sweetpotato_full.png';
-import kiwiFullImg from '@/assets/kiwi_full.png';
-import muskmelonFullImg from '@/assets/muskmelon_full.png';
-
 const router = useRouter();
 const products = ref([]);
 const orderMap = ref({});
-
-const productDescriptionMap = {
-  '광천 곱창김(5g*12봉)/2개/1세트':
-    '광천 김의 깊은 풍미와 바삭함을 느껴보세요. 1+1 행사로 더욱 풍성하게 드립니다.',
-  '나이스 부채살 스테이크(200g)':
-    '부드러운 육질과 고소한 풍미의 부채살 스테이크! 에어프라이어, 팬 구이로 최적.',
-  '고흥 햇감자(1.5kg/박스)':
-    '고흥에서 갓 수확한 신선한 햇감자! 찌거나 구워서 맛있게 즐기세요.',
-  '돼지양념칼집구이(800g/팩)':
-    '달콤짭짤한 양념이 깊숙이 배어있는 돼지 양념 칼집구이! 가족 모임, 캠핑에 강력 추천.',
-  '5無 훈제오리 슬라이스(250g*2팩)':
-    '합성첨가물 5無! 건강하게 즐기는 훈제 오리 슬라이스. 샐러드, 덮밥, 술안주 모두 OK.',
-  '노르웨이 생연어 필렛(200g/팩)':
-    '신선하게 공수한 노르웨이 생연어 필렛. 부드럽고 고소한 맛이 일품!',
-  '고당도 하미과 메론(대/1통)':
-    '당도 높은 하미과 메론으로 여름을 시원하게! 껍질 얇고 과육이 풍부한 고급 메론.',
-  '국산 생 블루베리(100g)/2개/1세트':
-    '달콤하고 촉촉한 국산 블루베리! 간식, 요거트 토핑, 샐러드에 활용해보세요.',
-  '수박(7~8kg/미만)':
-    '무더운 여름의 필수템, 시원한 수박! 아삭아삭 시원한 맛으로 온 가족이 즐겨요.',
-  '햇 초당옥수수(3입/망)':
-    '생으로도 먹을 수 있을 만큼 달콤한 초당옥수수! 쪄서 드시면 더욱 맛있어요.',
-  '진짜 맛있는 고구마(1.2kg/봉)':
-    '밤고구마 못지 않은 달콤함! 껍질째 구워먹는 진짜 맛있는 고구마.',
-  '제스프리 골드키위(9개/1세트)':
-    '골드키위 특유의 달콤함과 풍부한 비타민C! 아침 한 개로 활기찬 하루를 시작하세요.',
-  '머스크 메론(대/1통)':
-    '머스크향 가득한 고급 메론! 특별한 날 디저트로 강력 추천.',
-};
 
 const today = computed(() => {
   const date = new Date();
@@ -192,45 +134,12 @@ onMounted(async () => {
   });
 });
 
-const getProductImage = (productName) => {
-  const map = {
-    '돼지양념칼집구이(800g/팩)': porkRibsImg,
-    '고흥 햇감자(1.5kg/박스)': potatoImg,
-    '광천 곱창김(5g*12봉)/2개/1세트': gimImg,
-    '5無 훈제오리 슬라이스(250g*2팩)': duckSliceImg,
-    '노르웨이 생연어 필렛(200g/팩)': salmonImg,
-    '나이스 부채살 스테이크(200g)': beefSteakImg,
-    '고당도 하미과 메론(대/1통)': hamiguaMelonImg,
-    '국산 생 블루베리(100g)/2개/1세트': blueberryImg,
-    '수박(7~8kg/미만)': watermelonImg,
-    '햇 초당옥수수(3입/망)': cornImg,
-    '진짜 맛있는 고구마(1.2kg/봉)': sweetpotatoImg,
-    '제스프리 골드키위(9개/1세트)': kiwiImg,
-    '머스크 메론(대/1통)': muskmelonImg,
-  };
-  const cleanName = productName.trim();
-  return map[cleanName] || '';
+const getProductImage = (imageUrl) => {
+  return `http://localhost:8080/uploads/${imageUrl}`;
 };
 
-// full 이미지 map
-const fullImageMap = {
-  '광천 곱창김(5g*12봉)/2개/1세트': gimFullImg,
-  '돼지양념칼집구이(800g/팩)': porkRibsFullImg,
-  '고흥 햇감자(1.5kg/박스)': potatoFullImg,
-  '5無 훈제오리 슬라이스(250g*2팩)': duckSliceFullImg,
-  '노르웨이 생연어 필렛(200g/팩)': salmonFullImg,
-  '나이스 부채살 스테이크(200g)': beefSteakFullImg,
-  '고당도 하미과 메론(대/1통)': hamiguaMelonFullImg,
-  '국산 생 블루베리(100g)/2개/1세트': blueberryFullImg,
-  '수박(7~8kg/미만)': watermelonFullImg,
-  '햇 초당옥수수(3입/망)': cornFullImg,
-  '진짜 맛있는 고구마(1.2kg/봉)': sweetpotatoFullImg,
-  '제스프리 골드키위(9개/1세트)': kiwiFullImg,
-  '머스크 메론(대/1통)': muskmelonFullImg,
-};
-
-const getFullImage = (productName) => {
-  return fullImageMap[productName.trim()] || '';
+const getFullImage = (imageUrl) => {
+  return `http://localhost:8080/uploads/${imageUrl}`;
 };
 
 const increaseQuantity = (productId) => {

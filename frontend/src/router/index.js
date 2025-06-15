@@ -9,13 +9,8 @@ const routes = [
   { path: '/', redirect: '/products' },
   { path: '/products', component: ProductsView },
   { path: '/order', component: OrderView },
-  { path: '/complete', component: CompleteView },
+  { path: '/complete/:orderId', name: 'CompleteView', component: CompleteView },
   { path: '/admin/login', component: AdminLoginView },
-  {
-    path: '/admin/dashboard',
-    component: AdminDashboard,
-    meta: { requiresAuth: true },
-  },
   {
     path: '/admin/dashboard',
     component: AdminDashboard,
@@ -33,7 +28,7 @@ const routes = [
       },
       { path: 'users', component: () => import('../views/AdminUsersView.vue') },
       {
-        path: '/admin/dashboard/order-cards',
+        path: 'order-cards',
         name: 'OrderCards',
         component: () => import('@/views/OrderCardsView.vue'),
       },
@@ -46,7 +41,6 @@ const router = createRouter({
   routes,
 });
 
-// 라우트 가드 (관리자용)
 router.beforeEach((to, from, next) => {
   if (
     to.meta.requiresAuth &&

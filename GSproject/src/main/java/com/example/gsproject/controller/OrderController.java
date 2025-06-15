@@ -1,9 +1,13 @@
 package com.example.gsproject.controller;
 
+import com.example.gsproject.dto.OrderDetailResponse;
 import com.example.gsproject.dto.OrderRequestDTO;
+import com.example.gsproject.entity.Order;
 import com.example.gsproject.service.OrderService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -16,12 +20,19 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createOrder(@RequestBody OrderRequestDTO dto) {
+    public ResponseEntity<?> createOrder(@RequestBody OrderRequestDTO dto) {
         try {
-            orderService.saveOrder(dto);
-            return ResponseEntity.ok("주문 완료");
+            Order savedOrder = orderService.saveOrder(dto); // Order 리턴
+            return ResponseEntity.ok().body(Map.of("orderId", savedOrder.getId()));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("주문 실패: " + e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<OrderDetailResponse> getOrderDetail(@PathVariable Long id) {
+        OrderDetailResponse response = orderService.getOrderDetail(id);
+        return ResponseEntity.ok(response);
+    }
+
 }

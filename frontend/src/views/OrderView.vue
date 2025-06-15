@@ -1,14 +1,9 @@
 <template>
   <div class="order-container">
     <Header />
-    <!-- 로고 -->
-    <div class="logo">
-      <img :src="require('@/assets/gs1.jpg')" alt="GS THE FRESH 로고" />
-    </div>
 
     <h1>오늘의 사전예약 주문</h1>
 
-    <!-- 주문 상품 목록 -->
     <div class="order-summary">
       <h2>주문 내역</h2>
       <div
@@ -17,14 +12,13 @@
         class="order-item-card"
       >
         <img
-          :src="getProductImage(item.name)"
+          :src="`http://localhost:8080/uploads/${item.imageUrl}`"
           alt="상품 이미지"
           class="product-image"
         />
         <div class="item-info">
           <h3>{{ item.name }}</h3>
           <p>수량: {{ item.quantity }}</p>
-          <!-- 프로모션 안내 -->
           <p v-if="item.promoNote" class="promo-note">{{ item.promoNote }}</p>
           <p>금액: {{ (item.price * item.quantity).toLocaleString() }}원</p>
         </div>
@@ -35,7 +29,6 @@
       </div>
     </div>
 
-    <!-- 고객 정보 입력 -->
     <div class="customer-info">
       <h2>고객 정보 입력</h2>
       <label>
@@ -57,7 +50,6 @@
       </label>
     </div>
 
-    <!-- 주문 버튼 -->
     <button class="order-button" @click="submitOrder">주문하기</button>
   </div>
 </template>
@@ -68,21 +60,6 @@ import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import Header from '@/components/Header.vue';
 
-// 이미지 import
-import beefSteakImg from '@/assets/beef_steak.png';
-import blueberryImg from '@/assets/blueberry.png';
-import cornImg from '@/assets/corn.png';
-import duckSliceImg from '@/assets/duck_slice.png';
-import gimImg from '@/assets/gim.png';
-import hamiguaMelonImg from '@/assets/hamigua_melon.png';
-import kiwiImg from '@/assets/kiwi.png';
-import muskmelonImg from '@/assets/muskmelon.png';
-import porkRibsImg from '@/assets/pork_ribs.png';
-import salmonImg from '@/assets/salmon.png';
-import sweetpotatoImg from '@/assets/sweetpotato.png';
-import watermelonImg from '@/assets/watermelon.png';
-import potatoImg from '@/assets/potato.png';
-
 const route = useRoute();
 const router = useRouter();
 
@@ -90,12 +67,10 @@ const customerName = ref('');
 const customerPhone = ref('');
 const orderItems = ref([]);
 
-// 총 합계 계산
 const totalPrice = computed(() =>
   orderItems.value.reduce((sum, item) => sum + item.price * item.quantity, 0),
 );
 
-// 쿼리에서 orders 파싱
 onMounted(async () => {
   try {
     const orders = JSON.parse(route.query.orders || '[]');
@@ -115,7 +90,8 @@ onMounted(async () => {
         name: product?.name || 'Unknown',
         price: product?.price || 0,
         quantity: order.quantity,
-        promoNote: order.promoNote || null,
+        promoNote: product?.promotionType || null,
+        imageUrl: product?.imageUrl || '',
       };
     });
   } catch (e) {
@@ -123,32 +99,8 @@ onMounted(async () => {
   }
 });
 
-// 상품명 → 이미지 매핑
-const getProductImage = (productName) => {
-  const map = {
-    '돼지양념칼집구이(800g/팩)': porkRibsImg,
-    '고흥 햇감자(1.5kg/박스)': potatoImg,
-    '광천 곱창김(5g*12봉)/2개/1세트': gimImg,
-    '5無 훈제오리 슬라이스(250g*2팩)': duckSliceImg,
-    '노르웨이 생연어 필렛(200g/팩)': salmonImg,
-    '나이스 부채살 스테이크(200g)': beefSteakImg,
-    '고당도 하미과 메론(대/1통)': hamiguaMelonImg,
-    '국산 생 블루베리(100g)/2개/1세트': blueberryImg,
-    '수박(7~8kg/미만)': watermelonImg,
-    '햇 초당옥수수(3입/망)': cornImg,
-    '진짜 맛있는 고구마(1.2kg/봉)': sweetpotatoImg,
-    '제스프리 골드키위(9개/1세트)': kiwiImg,
-    '머스크 메론(대/1통)': muskmelonImg,
-  };
-
-  const cleanName = productName.trim();
-  return map[cleanName] || '';
-};
-
-// 전화번호 하이픈 자동 적용
 const formatPhoneNumber = (event) => {
-  let input = event.target.value.replace(/[^0-9]/g, ''); // 숫자만 남김
-
+  let input = event.target.value.replace(/[^0-9]/g, '');
   if (input.length < 4) {
     customerPhone.value = input;
   } else if (input.length < 7) {
@@ -182,8 +134,9 @@ const submitOrder = async () => {
   };
 
   try {
-    await axios.post('/api/orders', orderPayload);
-    router.push('/complete');
+    const res = await axios.post('/api/orders', orderPayload);
+    const orderId = res.data.orderId;
+    router.push(`/complete/${orderId}`);
   } catch (e) {
     console.error('주문 실패:', e);
     alert('주문에 실패했습니다.');
@@ -192,6 +145,7 @@ const submitOrder = async () => {
 </script>
 
 <style scoped>
+/* 기존 스타일 유지 */
 .order-container {
   max-width: 800px;
   margin: 0 auto;
