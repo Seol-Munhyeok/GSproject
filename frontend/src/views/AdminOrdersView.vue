@@ -1,35 +1,37 @@
 <template>
-  <div>
+  <div class="admin-orders-view">
     <h2>주문 현황</h2>
 
-    <!-- 표 영역 -->
-    <div class="orders-table-section">
-      <table class="orders-table">
-        <thead>
-          <tr>
-            <th>고객명</th>
-            <th v-for="product in productNames" :key="product">
-              {{ truncate(product) }}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="customer in customerNames" :key="customer">
-            <td>{{ customer }}</td>
-            <td
-              v-for="product in productNames"
-              :key="product"
-              style="text-align: center"
-            >
-              {{
-                ordersMap[customer] && ordersMap[customer][product]
-                  ? ordersMap[customer][product]
-                  : ''
-              }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <!-- 표 스크롤을 이 div 안에서만 발생하도록 제한 -->
+    <div class="primevue-table-wrapper">
+      <DataTable
+        :value="tableRows"
+        scrollable
+        scrollHeight="70vh"
+        style="width: 79vw"
+        tableStyle="min-width: 1500px"
+        :paginator="false"
+        stripedRows
+        :rowClass="getRowClass"
+      >
+        <!-- 고정 열 -->
+        <Column
+          field="customerName"
+          header="고객명"
+          frozen
+          alignFrozen="left"
+          style="min-width: 150px"
+        />
+
+        <!-- 동적 상품 열 -->
+        <Column
+          v-for="product in productNames"
+          :key="product"
+          :field="product"
+          :header="truncate(product)"
+          style="min-width: 120px"
+        />
+      </DataTable>
     </div>
   </div>
 </template>
@@ -41,7 +43,7 @@ import axios from 'axios';
 const ordersData = ref([]);
 const productNames = ref([]);
 const customerNames = ref([]);
-const ordersMap = ref({});
+const tableRows = ref([]);
 
 onMounted(async () => {
   const res = await axios.get('/api/admin/orders');
@@ -57,66 +59,55 @@ onMounted(async () => {
     new Set(ordersData.value.map((o) => o.customerName)),
   ).sort((a, b) => a.localeCompare(b, 'ko'));
 
-  // Map 구조로 데이터 가공
-  const map = {};
-  ordersData.value.forEach((o) => {
-    if (!map[o.customerName]) {
-      map[o.customerName] = {};
-    }
-    map[o.customerName][o.productName] = o.quantity;
+  // DataTable에 맞게 행 단위로 변환
+  tableRows.value = customerNames.value.map((customer) => {
+    const row = { customerName: customer };
+    productNames.value.forEach((product) => {
+      const total = ordersData.value
+        .filter((o) => o.customerName === customer && o.productName === product)
+        .reduce((sum, o) => sum + o.quantity, 0);
+      row[product] = total === 0 ? '' : total;
+    });
+    return row;
   });
-  ordersMap.value = map;
-});
 
-// 상품명 너무 길 때 자르기
+  const sumRow = { customerName: '합계' };
+  productNames.value.forEach((product) => {
+    sumRow[product] = tableRows.value.reduce((sum, row) => {
+      const qty = Number(row[product]);
+      return sum + (isNaN(qty) ? 0 : qty);
+    }, 0);
+  });
+  tableRows.value.push(sumRow);
+});
+const getRowClass = (data) => {
+  return data.customerName === '합계' ? 'summary-row' : '';
+};
 const truncate = (text, maxLength = 10) => {
   return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
 };
 </script>
 
 <style scoped>
-.orders-table-section {
-  overflow-x: auto;
-  overflow-y: hidden;
-  max-height: 60vh;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  background-color: white;
-  padding: 10px;
-  margin-bottom: 30px;
-  max-width: 100%;
-  box-sizing: border-box;
+.admin-orders-view {
+  padding: 2rem;
 }
 
-.orders-table {
-  width: auto;
-  min-width: 1200px;
-  border-collapse: collapse;
+.p-datatable .p-column-title {
+  white-space: nowrap;
 }
-
-.orders-table th,
-.orders-table td {
-  border: 1px solid #ddd;
-  padding: 10px;
+.p-datatable-tbody > tr > td {
   text-align: center;
-  font-size: 14px;
 }
 
-.orders-table th {
-  background-color: rgb(240, 250, 245); /* 헤더 배경 강조 */
+.primevue-table-wrapper {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+:deep(.summary-row) {
+  background-color: #e6f4ea;
+  font-weight: bold;
   color: rgb(0, 87, 63);
-  font-weight: bold;
-}
-
-.orders-table td:first-child {
-  background-color: #f9f9f9; /* 고객명 열 배경 */
-  font-weight: bold;
-  color: #333;
-}
-
-/* 행 hover 효과 */
-.orders-table tbody tr:hover {
-  background-color: #f5f5f5;
 }
 </style>

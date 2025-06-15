@@ -2,6 +2,8 @@ package com.example.gsproject.service;
 
 import com.example.gsproject.dto.AdminLoginRequest;
 import com.example.gsproject.dto.AdminStatisticsResponse;
+import com.example.gsproject.dto.CustomerStatDTO;
+import com.example.gsproject.dto.TopCustomerDTO;
 import com.example.gsproject.entity.Order;
 import com.example.gsproject.entity.OrderItem;
 import com.example.gsproject.repository.AdminUserRepository;
@@ -10,6 +12,8 @@ import com.example.gsproject.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -80,6 +84,23 @@ public class AdminService {
                 dailyStats
         );
     }
+
+    public List<CustomerStatDTO> getAllCustomerStats() {
+        return orderRepository.getCustomerStatsRaw().stream()
+                .map(row -> new CustomerStatDTO(
+                        (String) row[0],
+                        (String) row[1],
+                        ((Number) row[2]).intValue(),
+                        ((Number) row[3]).intValue()
+                ))
+                .toList();
+    }
+
+
+
+
+
+
 
 
 }

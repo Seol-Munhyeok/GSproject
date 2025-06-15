@@ -1,8 +1,6 @@
 package com.example.gsproject.controller;
 
-import com.example.gsproject.dto.AdminLoginRequest;
-import com.example.gsproject.dto.AdminStatisticsResponse;
-import com.example.gsproject.dto.OrderAdminViewDTO;
+import com.example.gsproject.dto.*;
 import com.example.gsproject.service.AdminService;
 import com.example.gsproject.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -51,5 +49,10 @@ public class AdminController {
             @RequestParam LocalDate to
     ) {
         return ResponseEntity.ok(adminService.getStatistics(from, to));
+    }
+
+    @GetMapping("/customers")
+    public List<CustomerStatDTO> getAllCustomers() {
+        return adminService.getAllCustomerStats();
     }
 }

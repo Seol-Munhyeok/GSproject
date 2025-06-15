@@ -27,7 +27,7 @@
           상품 등록
         </button>
         <button @click="goTo('users')" :class="{ active: isActive('users') }">
-          회원 관리
+          고객 관리
         </button>
       </nav>
     </aside>

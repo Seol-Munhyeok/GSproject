@@ -82,6 +82,11 @@ const handleLogout = () => {
   background-color: rgb(0, 87, 63);
   color: white;
   font-family: 'Noto Sans KR', sans-serif;
+
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  min-width: 0;
 }
 
 .left-section,

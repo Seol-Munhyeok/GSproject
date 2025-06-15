@@ -1,5 +1,6 @@
 package com.example.gsproject.repository;
 
+import com.example.gsproject.dto.CustomerStatDTO;
 import com.example.gsproject.dto.DailyStatDTO;
 import com.example.gsproject.dto.OrderAdminViewDTO;
 import com.example.gsproject.entity.Order;
@@ -49,5 +50,22 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
         ORDER BY o.order_date
     """, nativeQuery = true)
     List<Object[]> getDailyStats(@Param("from") LocalDate from, @Param("to") LocalDate to);
+
+    @Query(value = """
+SELECT c.name,
+       c.phone,
+       COUNT(DISTINCT o.id),
+       COALESCE(SUM(oi.quantity * p.price), 0)
+FROM customer c
+LEFT JOIN orders o ON c.id = o.customer_id
+LEFT JOIN order_item oi ON o.id = oi.order_id
+LEFT JOIN product p ON oi.product_id = p.id
+GROUP BY c.name, c.phone
+""", nativeQuery = true)
+    List<Object[]> getCustomerStatsRaw();
+
+
+
+
 
 }
