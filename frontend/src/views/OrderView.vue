@@ -31,6 +31,12 @@
 
     <div class="customer-info">
       <h2>고객 정보 입력</h2>
+
+      <div class="remember-checkbox">
+        <label for="remember">이름과 전화번호 저장하기</label>
+        <input type="checkbox" v-model="rememberInfo" id="remember" />
+      </div>
+
       <label>
         이름:
         <input
@@ -66,6 +72,7 @@ const router = useRouter();
 const customerName = ref('');
 const customerPhone = ref('');
 const orderItems = ref([]);
+const rememberInfo = ref(false);
 
 const totalPrice = computed(() =>
   orderItems.value.reduce((sum, item) => sum + item.price * item.quantity, 0),
@@ -97,6 +104,14 @@ onMounted(async () => {
   } catch (e) {
     console.error('주문 화면 오류:', e);
   }
+
+  const savedName = localStorage.getItem('savedCustomerName');
+  const savedPhone = localStorage.getItem('savedCustomerPhone');
+  if (savedName && savedPhone) {
+    customerName.value = savedName;
+    customerPhone.value = savedPhone;
+    rememberInfo.value = true;
+  }
 });
 
 const formatPhoneNumber = (event) => {
@@ -122,6 +137,14 @@ const submitOrder = async () => {
   if (!customerName.value || !customerPhone.value) {
     alert('이름과 전화번호를 입력해주세요.');
     return;
+  }
+
+  if (rememberInfo.value) {
+    localStorage.setItem('savedCustomerName', customerName.value);
+    localStorage.setItem('savedCustomerPhone', customerPhone.value);
+  } else {
+    localStorage.removeItem('savedCustomerName');
+    localStorage.removeItem('savedCustomerPhone');
   }
 
   const orderPayload = {
@@ -233,5 +256,18 @@ const submitOrder = async () => {
 
 .order-button:hover {
   background-color: #005fa3;
+}
+
+.remember-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.remember-checkbox input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
 }
 </style>
