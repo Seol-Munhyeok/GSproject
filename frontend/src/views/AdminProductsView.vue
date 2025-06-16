@@ -32,9 +32,9 @@
         </select>
       </div>
 
-      <div class="form-group">
-        <label>오늘 사전예약 상품으로 등록</label>
-        <input type="checkbox" v-model="availableToday" />
+      <div class="form-group horizontal-checkbox">
+        <input type="checkbox" v-model="availableToday" id="availableToday" />
+        <label for="availableToday">오늘 사전예약 상품으로 등록</label>
       </div>
 
       <div class="form-group">
@@ -46,7 +46,7 @@
       </div>
 
       <div class="form-group">
-        <label>상품 이미지 업로드</label>
+        <label>상품 이미지 업로드 (10MB 까지 업로드 가능)</label>
         <input type="file" @change="onFileChange" accept="image/*" required />
       </div>
 
@@ -144,7 +144,14 @@ const submitProduct = async () => {
 .form-group {
   display: flex;
   flex-direction: column;
+  margin-bottom: 1.2rem;
 }
+.horizontal-checkbox {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
 input[type='text'],
 input[type='number'],
 textarea,
@@ -175,5 +182,9 @@ textarea {
   width: 100px;
   border: 1px solid #ccc;
   border-radius: 6px;
+}
+label {
+  font-weight: bold;
+  margin-bottom: 7px;
 }
 </style>

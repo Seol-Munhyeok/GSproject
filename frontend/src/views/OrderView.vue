@@ -33,8 +33,8 @@
       <h2>고객 정보 입력</h2>
 
       <div class="remember-checkbox">
-        <label for="remember">이름과 전화번호 저장하기</label>
         <input type="checkbox" v-model="rememberInfo" id="remember" />
+        <label for="remember">이름과 전화번호 저장하기</label>
       </div>
 
       <label>
@@ -57,6 +57,9 @@
     </div>
 
     <button class="order-button" @click="submitOrder">주문하기</button>
+    <button class="to-products-btn" @click="goToProducts">
+      상품 화면으로 이동
+    </button>
   </div>
 </template>
 
@@ -165,6 +168,10 @@ const submitOrder = async () => {
     alert('주문에 실패했습니다.');
   }
 };
+
+const goToProducts = () => {
+  router.push('/products');
+};
 </script>
 
 <style scoped>
@@ -270,5 +277,26 @@ const submitOrder = async () => {
   width: 18px;
   height: 18px;
   cursor: pointer;
+}
+
+.remember-checkbox label {
+  margin-bottom: 0;
+}
+
+.to-products-btn {
+  width: 100%;
+  margin-top: 20px;
+  padding: 12px 15px;
+  background-color: #bbb;
+  color: #333;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.to-products-btn:hover {
+  background-color: #ccc;
 }
 </style>
