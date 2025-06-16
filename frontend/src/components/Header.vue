@@ -6,7 +6,7 @@
         @click="goToAdminDashboard"
         class="header-btn"
       >
-        관리자 화면으로 이동
+        관리자 페이지로 이동
       </button>
       <button
         v-if="isAdminLoggedIn && isAdminPage"
@@ -25,11 +25,17 @@
       <span v-if="isAdminLoggedIn && adminEmail" class="welcome-text">
         {{ adminEmail }}님, 반갑습니다!
       </span>
+      <button @click="goToMyOrders" class="header-btn secondary">
+        내 주문 내역
+      </button>
       <button v-if="isAdminLoggedIn" @click="handleLogout" class="header-btn">
         로그아웃
       </button>
       <button v-else @click="goToAdminLogin" class="header-btn">
         관리자 로그인
+      </button>
+      <button v-if="isAdminPage" @click="goToChangeInfo" class="header-btn">
+        회원 정보 수정
       </button>
     </div>
   </header>
@@ -71,6 +77,14 @@ const handleLogout = () => {
   localStorage.removeItem('adminEmail');
   router.push('/admin/login');
 };
+
+const goToChangeInfo = () => {
+  router.push('/admin/dashboard/profile');
+};
+
+const goToMyOrders = () => {
+  router.push('/my-orders');
+};
 </script>
 
 <style scoped>
@@ -104,10 +118,20 @@ const handleLogout = () => {
   cursor: pointer;
   font-weight: bold;
   margin-left: 10px;
+  transition: background-color 0.2s;
 }
 
 .header-btn:hover {
   background-color: #e6e6e6;
+}
+
+.header-btn.secondary {
+  background-color: #f0f0f0;
+  color: rgb(0, 87, 63);
+}
+
+.header-btn.secondary:hover {
+  background-color: #d5d5d5;
 }
 
 .logo-text {

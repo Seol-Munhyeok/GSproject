@@ -1,9 +1,7 @@
 package com.example.gsproject.service;
 
-import com.example.gsproject.dto.AdminLoginRequest;
-import com.example.gsproject.dto.AdminStatisticsResponse;
-import com.example.gsproject.dto.CustomerStatDTO;
-import com.example.gsproject.dto.TopCustomerDTO;
+import com.example.gsproject.dto.*;
+import com.example.gsproject.entity.AdminUser;
 import com.example.gsproject.entity.Order;
 import com.example.gsproject.entity.OrderItem;
 import com.example.gsproject.repository.AdminUserRepository;
@@ -95,6 +93,19 @@ public class AdminService {
                 ))
                 .toList();
     }
+
+    public void updatePassword(PasswordChangeRequest request) {
+        AdminUser admin = adminUserRepository.findByEmail(request.email())
+                .orElseThrow(() -> new IllegalArgumentException("관리자 정보가 없습니다."));
+
+        if (!admin.getPassword().equals(request.currentPassword())) {
+            throw new IllegalArgumentException("현재 비밀번호가 틀렸습니다.");
+        }
+
+        admin.setPassword(request.newPassword());
+        adminUserRepository.save(admin);
+    }
+
 
 
 

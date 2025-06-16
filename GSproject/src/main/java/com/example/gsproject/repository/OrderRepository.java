@@ -64,8 +64,4 @@ GROUP BY c.name, c.phone
 """, nativeQuery = true)
     List<Object[]> getCustomerStatsRaw();
 
-
-
-
-
 }

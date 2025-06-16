@@ -55,4 +55,14 @@ public class AdminController {
     public List<CustomerStatDTO> getAllCustomers() {
         return adminService.getAllCustomerStats();
     }
+
+    @PostMapping("/update-password")
+    public ResponseEntity<?> updatePassword(@RequestBody PasswordChangeRequest request) {
+        try {
+            adminService.updatePassword(request);
+            return ResponseEntity.ok(Map.of("message", "비밀번호가 성공적으로 변경되었습니다."));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        }
+    }
 }

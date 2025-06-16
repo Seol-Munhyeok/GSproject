@@ -170,10 +170,11 @@ const submitOrder = async () => {
 <style scoped>
 /* 기존 스타일 유지 */
 .order-container {
-  max-width: 800px;
+  max-width: 700px;
   margin: 0 auto;
   padding: 20px;
   font-family: 'Noto Sans KR', sans-serif;
+  min-width: 47vw;
 }
 
 .logo img {

@@ -7,6 +7,7 @@ import com.example.gsproject.service.OrderService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -33,6 +34,15 @@ public class OrderController {
     public ResponseEntity<OrderDetailResponse> getOrderDetail(@PathVariable Long id) {
         OrderDetailResponse response = orderService.getOrderDetail(id);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<OrderDetailResponse>> searchOrders(
+            @RequestParam String name,
+            @RequestParam String phone) {
+
+        List<OrderDetailResponse> orders = orderService.getOrdersByCustomerInfo(name, phone);
+        return ResponseEntity.ok(orders);
     }
 
 }

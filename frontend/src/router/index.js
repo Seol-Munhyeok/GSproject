@@ -12,6 +12,10 @@ const routes = [
   { path: '/complete/:orderId', name: 'CompleteView', component: CompleteView },
   { path: '/admin/login', component: AdminLoginView },
   {
+    path: '/my-orders',
+    component: () => import('../views/MyOrdersView.vue'),
+  },
+  {
     path: '/admin/dashboard',
     component: AdminDashboard,
     meta: { requiresAuth: true },
@@ -31,6 +35,10 @@ const routes = [
         path: 'order-cards',
         name: 'OrderCards',
         component: () => import('@/views/OrderCardsView.vue'),
+      },
+      {
+        path: 'profile',
+        component: () => import('@/views/AdminProfileView.vue'),
       },
     ],
   },

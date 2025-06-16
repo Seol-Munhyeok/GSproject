@@ -93,5 +93,42 @@ public class OrderService {
         );
     }
 
+    public List<OrderDetailResponse> getOrdersByCustomerInfo(String name, String phone) {
+        List<Customer> customers = customerRepository.findAll().stream()
+                .filter(c -> c.getName().equals(name) && c.getPhone().equals(phone))
+                .toList();
+
+        if (customers.isEmpty()) return List.of();
+
+        List<OrderDetailResponse> result = new ArrayList<>();
+
+        for (Customer customer : customers) {
+            for (Order order : customer.getOrders()) {
+                List<OrderItemResponse> items = order.getOrderItems().stream()
+                        .map(item -> new OrderItemResponse(
+                                item.getProduct().getName(),
+                                item.getProduct().getPrice(),
+                                item.getQuantity()
+                        )).toList();
+
+                int totalPrice = items.stream()
+                        .mapToInt(i -> i.price() * i.quantity())
+                        .sum();
+
+                result.add(new OrderDetailResponse(
+                        order.getId(),
+                        order.getCreatedAt(),
+                        totalPrice,
+                        customer.getName(),
+                        items
+                ));
+            }
+        }
+
+        return result;
+    }
+
+
+
 
 }
