@@ -94,9 +94,7 @@ public class OrderService {
     }
 
     public List<OrderDetailResponse> getOrdersByCustomerInfo(String name, String phone) {
-        List<Customer> customers = customerRepository.findAll().stream()
-                .filter(c -> c.getName().equals(name) && c.getPhone().equals(phone))
-                .toList();
+        List<Customer> customers = customerRepository.findByNameAndPhone(name, phone);
 
         if (customers.isEmpty()) return List.of();
 
